@@ -1,0 +1,63 @@
+
+    <script type="text/javascript" class="init">
+    
+
+$(document).ready(function() {
+    $('#entries').DataTable();
+} );
+
+
+    </script>
+
+
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="tablecontainer">
+	<table id="entries" class="display" cellspacing="0" width="90%">
+	        <thead>
+	            <tr>
+	                <th>Description</th>
+	                <th>Url</th>
+	                <th>Datetime</th>
+	                <th>Label</th>
+	            </tr>
+	        </thead>
+	        <tfoot>
+	            <tr>
+	                <th>Description</th>
+	                <th>Url</th>
+	                <th>Datetime</th>
+	                <th>Label</th>
+	            </tr>
+	        </tfoot>
+	        <tbody>
+				{% for entry in entries %}            
+					<tr>
+			            <td> {{ entry.title }} </td>
+			            <td> {{ entry.text }} </td>
+			            <td> {{ entry.date }} </td>
+			            <td> {{ entry.result }} </td>
+			        </tr>
+				{% else %}
+					<tr>
+			            <td>Not</td>
+			            <td>Enoguh</td>
+			            <td>Data</td>
+			            <td></td>
+			        </tr>
+				    	
+				{% endfor %}
+
+
+	        </tbody>
+	    </table>
+</div>
+
+<div id="footer">
+
+</div>
+
+{% endblock %}

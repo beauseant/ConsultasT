@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+
+	<div class="loginwindow">
+		<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+		<div class="logo"></div>
+		<div class="login-block">
+			<form action="{{ url_for('add_entry') }}" method=post>
+				<input type=text size=30 placeholder="Title" name=title>
+				<textarea name=text placeholder="Text" rows=5 cols=40></textarea>
+				<input type=submit value=Share>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+

@@ -1,0 +1,54 @@
+
+
+
+
+{% extends "layout.html" %}
+
+{% block body %}
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+  	$(".js-example-basic-multiple").select2();
+  		$(".CATEGORIA").select2();
+	});
+
+
+
+
+</script>
+
+
+  	<h1>Mostrando: {{ query['consulta'] }}</h1>
+
+
+  	<div style="width:70%;">
+		<form action="{{ '/labeler' }}" method=post>
+			<p>Seleccione una opción:</p>
+			<select class="CATEGORIA js-states form-control" id="id_label_multiple"  name="CATEGORIA" multiple="multiple">
+				{% for fam, cat in categories.iteritems() %}
+	 				<optgroup label="{{fam}}"> 
+		 			{% for id, name in cat.iteritems() %}
+		 				<option value="{{id}}">{{name}}</option>
+		 			{% endfor %}
+	 		{% endfor %}
+	 		</select>
+	 		<input type="hidden" name="query_id" value="{{ query['idconsulta'] }}">
+			<input type=submit value="Grabar y continuar">
+
+			<select class="CATEGORIA js-states form-control" id="id_label_multiple"  name="CATEGORIA2" multiple="multiple">
+				<option value="25000">pepe</option>
+	 		</select>
+		</form>
+	</div>
+
+
+
+
+
+
+{% endblock %}
+
+
+
+

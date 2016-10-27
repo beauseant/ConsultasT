@@ -1,0 +1,57 @@
+import csv
+from pymongo import MongoClient
+
+
+class DB (object):
+
+
+	__host = 'localhost'
+	__port = 2701
+
+	__dbName = ''
+	__collectionName = 'domain'
+
+
+	__pwd  = ''
+	__user = ''
+	__db = None
+	__collection = ''	
+	__collectionInvest = ''
+	__collectionOrganismo = ''
+
+	__conn = None
+
+	__urlFile = None
+
+	
+
+
+	def connect( self ):
+		'''
+			mongodb creates databases and collections automatically for you if they don't exist already. 
+		'''		
+		try:
+			client = MongoClient( self.__host )
+			client[ self.__dbName ].authenticate ( self.__user, self.__pwd )
+			self.__db = client[ self.__dbName ]
+			self.__collection = self.__db [ self.__collectionName ]
+			self.__collectionInvest = self.__db [ 'investigador' ]
+			self.__collectionOrganismo =self.__db [ 'organismo' ]
+
+		except Exception as E:
+			print ('fail to connect mongodb @ %s:%d, %s', self.__host, self.__port, str (E) )
+			exit ()
+
+		print ("connected to mongodb @ %s:[%s]", self.__host, self.__port)
+
+
+	def __init__ ( self, dbName, host, collection, user, pwd ):
+		self.__dbName = dbName
+		self.__pwd = pwd
+		self.__user = user
+		self.__collectionName = collection
+		self.__host = host
+
+		print dbName,host,collection,pwd,user
+
+		self.connect ()

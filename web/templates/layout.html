@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <![endif]-->
+    <title>::WebApp::</title>
+    <!--REQUIRED STYLE SHEETS-->
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+href="">
+    <link type=text/css rel="stylesheet"  href="{{ url_for('static', filename='css/bootstrap.css') }}"  />
+    <!-- FONTAWESOME STYLE CSS -->
+    <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet" />
+    <!-- CUSTOM STYLE CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+    <!-- GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Ruluko' rel='stylesheet' type='text/css' />
+    <link href="{{ url_for('static', filename='css/jquery.dataTables.min.css') }}" rel="stylesheet" />
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" language="javascript" src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
+    <script type="text/javascript" language="javascript" src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+
+    <link link type=text/css rel="stylesheet"  href="{{ url_for('static', filename='css/select2.min.css') }}" rel="stylesheet" />
+    <script type="text/javascript" language="javascript" src="{{ url_for('static', filename='js/select2.min.js') }}"></script>
+
+    <script type="text/javascript" class="init">
+    
+
+$(document).ready(function() {
+    $('#entries').DataTable();
+} );
+
+
+    </script>
+
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="htttp://www.binarytheme.com">::WebApp:: </a>
+            </div>
+            <!-- Collect the nav links for toggling -->
+
+
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+					{% if not session.logged_in %}
+    					<li><a href="{{ url_for('login') }}">LogIn</a></li>
+					{% else %}
+    					<li><a href="{{ url_for('logout') }}">LogOut</a></li>
+				    {% endif %}
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <!--End Navigation -->
+
+
+    <!--Header section  -->
+    <div class="container" id="home">
+        <div class="row text-center ">
+        </div>
+    </div>
+    <!--End Header section  -->
+    <!--About Section-->
+        <div class="container">
+			  {% for message in get_flashed_messages() %}
+				<div class=flash>{{ message }}</div>
+			  {% endfor %}
+
+		</div>
+
+
+
+
+  {% block body %}{% endblock %}
+
