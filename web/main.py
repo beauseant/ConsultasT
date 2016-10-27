@@ -84,8 +84,14 @@ def start_label ():
     query = g.mydb.getConsulta ( all=False )
 
     if request.method == 'POST':
-        import ipdb ; ipdb.set_trace()
-        g.mydb.setCategoria (request.form ['query_id'], dict(request.form)['CATEGORIA'])
+
+        dictOptions = dict(request.form)
+
+        queryid =  dictOptions.pop ('query_id')[0]
+
+        cats = [v for k,v in dictOptions.iteritems() ]
+
+        g.mydb.setCategoria ( queryid, cats)
         query = g.mydb.getConsulta ( all=False )
         if not (query):
             flash('No more data')
@@ -106,9 +112,26 @@ def start_export ():
     categories = g.mydb.getFinalCategories ()
 
     allQuerys = g.mydb.getConsulta ( all=True )
-    strQuerys = ",".join([str(query['idconsulta']) + query['consulta'] for query in allQuerys])
+    strCategories = ",".join([str(query['catid']) + query['categoria'] for query in categories])
 
-    return render_template('export.html', categories=categories, querys=strQuerys)
+    numCats = g.mydb.getNumCats ()
+    cad = ''
+    for query in allQuerys:
+        cad = cad + '"' + str(query['idconsulta']) + '/' + query['consulta'] + '"'
+        listzeros=[0] * numCats
+        for cat in query['categorias']:
+            listzeros[int(cat[0])] = 1
+
+        cad = cad + '"' + ','.join(str(e) for e in listzeros) + '"'
+        cad = cad + '\n'
+
+        text_file = open("Output.csv", "w")
+        strCategories = strCategories + '\n'
+        text_file.write( strCategories )
+        text_file.write( cad )
+        text_file.close()
+
+    return render_template('export.html', categories=strCategories, querys=cad)
 
 
 @app.route('/login', methods=['GET', 'POST'])

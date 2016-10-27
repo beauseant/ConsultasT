@@ -2,10 +2,26 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<div class="tablecontainer">
-<p> <a href="/labeler">Etiquetar consultas sin categorizar </a></p>
-<p> Ver consultas ya categorizadas </p>
-<p> <a href="/export">Exportar resultados a un CSV </a></p>
+<div class="mainoptions">
+
+	<a href="/labeler" class="a-btn">
+		<span class="a-btn-text">Etiquetar consultas sin categorizar</span> 
+		<span class="a-btn-slide-text"><i class="fa fa-hand-o-right" aria-hidden="true"></i></span>
+		<span class="a-btn-icon-right"><span></span></span>
+	</a>
+
+	<a href="/export" class="a-btn">
+		<span class="a-btn-text">Ver consultas categorizadas</span> 
+		<span class="a-btn-slide-text"><i class="fa fa-tags" aria-hidden="true"></i></span>
+		<span class="a-btn-icon-right"><span></span></span>
+	</a>
+
+	<a href="/export" class="a-btn">
+		<span class="a-btn-text">Exportar a un fichero</span> 
+		<span class="a-btn-slide-text"><i class="fa fa-tasks" aria-hidden="true"></i></span>
+		<span class="a-btn-icon-right"><span></span></span>
+	</a>
+
 
 </div>
 
