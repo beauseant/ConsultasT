@@ -1,0 +1,9 @@
+[DB]
+dbname:consultasT
+host:localhost
+user:consultas
+pwd:teich:i6I
+[APP]
+host:0.0.0.0
+port:8080
+

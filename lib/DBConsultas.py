@@ -20,6 +20,7 @@ class DB (object):
 
 
 	__categoriesList = None
+	__dictCats = {}
 	
 
 
@@ -89,8 +90,16 @@ class DB (object):
 
 
 	def getUserPwd (self, user ):
+		try:
+			data =  (self.__collectionUser.find({'user':user},{'pwd':1}).limit(1))[0]['pwd']
+		except:
+			data = None
+		finally:
+			return data
 
-		return (self.__collectionUser.find({'user':user},{'pwd':1}).limit(1))[0]['pwd']
+	def createUser (self, name, hash ):
+		
+		self.__collectionUser.update ({'user':name},{'$set':{'pwd':hash}}, upsert=True)
 
 
 
@@ -112,20 +121,34 @@ class DB (object):
 
 		return self.__categoriesList
 
+	def getDictCats (self):		
+
+		if not self.__dictCats:
+			self.__dictCats = {}
+			for data in self.__collectionCategorias.find({},{'catid':1,'categoria':1}):
+				self.__dictCats[str(data['catid'])] = data['categoria']
+
+			return self.__dictCats
 
 	def getFinalCategories ( self ):
 		return  (self.__collectionCategorias.find({},{'catid':1,'categoria':1}))
 
 	def getConsulta ( self, all=False ):
 		if all:			
-			return  (self.__collectionConsultas.find({}))
+			return  (self.__collectionConsultas.find({'categorias':{'$exists':True}}))
 		else:
 			return  (self.__collectionConsultas.find({'categorias':{'$exists':False}}).limit(1)[0])
-		
+
 	def setCategoria (self, idconsulta, categorias ):
 		self.__collectionConsultas.update ({'idconsulta':int(idconsulta)},{'$set':{'categorias':categorias}})
 		#import ipdb ; ipdb.set_trace()
 
+
+	def getNumCats (self):
+		return  (self.__collectionConsultas.count())
+
+	def createIndex (self):
+		self.__collectionCategorias.createIndex( { catid: 1 } )
 
 
 
