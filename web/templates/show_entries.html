@@ -1,46 +1,57 @@
-    <script type="text/javascript" class="init">
-    
-
-$(document).ready(function() {
-    $('#entries').DataTable();
-} );
-
-
-    </script>
 
 
 {% extends "layout.html" %}
 
+<script type="text/javascript" class="init">
+    
+
+jQuery(document).ready(function($){
+// standard on load code goes here with $ prefix
+// note: the $ is setup inside the anonymous function of the ready command
+
+    $('#entries').DataTable();
+
+});
+
+
+
+
+    </script>
 
 {% block body %}
 
 <div class="tablecontainer">
+	<form action="{{ '/show' }}" method=post>
 	<table id="entries" class="display" cellspacing="0" width="90%">
 	        <thead>
 	            <tr>
 	                <th>Consulta</th>
 	                <th>Categorías</th>
+	                <th>Seleccionar todas  <input type="checkbox" name="select-all" id="select-all" /></th>
 	            </tr>
 	        </thead>
 	        <tfoot>
 	            <tr>
 	                <th>Consulta</th>
 	                <th>Categoría</th>
+	                <th>Opciones</th>
 	            </tr>
 	        </tfoot>
 	        <tbody>
-				{% for entry in entries %}            
-					<tr>
-			            <td> {{ entry['consulta'] }} </td>
-			            <td>
-			            	{% for cat in entry['categorias'] %}
-			            		{% set catStr=dictCats[cat[0]] %}
-			            		{{catStr}},
 
-			            	{% endfor %}
-
-			            </td>
-			        </tr>
+					{% for entry in entries %}            
+						<tr>
+				            <td> {{ entry['consulta'] }} </td>
+				            <td>
+				            	{% for cat in entry['categorias'] %}
+				            		{% set catStr=dictCats[cat[0]] %}
+				            		{{catStr}},
+				            	{% endfor %}			        
+				            </td>
+				            <td>
+				            	<input type="checkbox" name="borrar" value="{{entry['idconsulta']}}">
+				            </td>
+				        </tr>
 				{% else %}
 					<tr>
 			            <td>Not</td>
@@ -50,11 +61,13 @@ $(document).ready(function() {
 			        </tr>
 				    	
 				{% endfor %}
-
-
 	        </tbody>
 	    </table>
+		<input type="submit" value="Eliminar seleccionadas">
+		</form>
+
 </div>
+
 
 <div id="footer">
 

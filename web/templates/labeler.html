@@ -11,13 +11,13 @@ $(document).ready(function() {
 
 </script>
 
-  	<h2>Seleccione categorías para: {{ query['consulta'] }}</h2>
+  	<h2 style="margin-left:200px;">Seleccione categorías para: {{ query['consulta'] }}</h2>
 
 	<form action="{{ '/labeler' }}" method=post>
 	  	<div  class="catlist">
 				{% for fam  in sortedList %}
 					{% set  cat = categories[fam] %}
-					<div style="float:left;padding-right:10px;padding-bottom:50px;width:300px; height:90px;">
+					<div style="float:left;padding-right:10px;padding-bottom:50px;width:350px; height:100px;">
 					{{fam}}
 					<select style="width:100%;"class="CATEGORIA js-example-responsive js-example-basic-single js-states form-control" id="id_label_multiple"  name="{{fam}}" multiple="multiple">
 		 					{% for id, name in cat.iteritems() %}
@@ -28,11 +28,11 @@ $(document).ready(function() {
 	 			{% endfor %}
 	 	</div>
  		<input type="hidden" name="query_id" value="{{ query['idconsulta'] }}">
-		<input style="background-color: #f2efe8 ; margin-top:40px;" type=submit value="Grabar y continuar">
+		<input style="background-color: #f2efe8 ; margin-top:10px;margin-left:200px" type=submit value="Grabar y continuar">
 	</form>
 
 <div id="footer">
-
+<p>Consultas totales: {{numquerys}} / Consultas categorizadas: {{etiquetadas}}</p>
 </div>	
 
 {% endblock %}

@@ -53,7 +53,10 @@ def show_mainMenu():
     if not session.get('logged_in'):
         return render_template('login.html')
 
-    return render_template('show_mainMenu.html')
+    numquerys = g.mydb.getNumQuerys ( etiquetadas = False)
+    etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
+
+    return render_template('show_mainMenu.html', etiquetadas=etiquetadas, numquerys=numquerys)
 
 
 @app.route('/about')
@@ -70,6 +73,8 @@ def start_label ():
     categories = g.mydb.getCategories ()
     sortedList = sorted(categories)
     query = g.mydb.getConsulta ( all=False )
+    numquerys = g.mydb.getNumQuerys ( etiquetadas = False)
+    etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
 
     if request.method == 'POST':
 
@@ -81,6 +86,7 @@ def start_label ():
 
         g.mydb.setCategoria ( queryid, cats)
         query = g.mydb.getConsulta ( all=False )
+        etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
         if not (query):
             flash('No more data')
             return redirect(url_for('show_mainMenu'))
@@ -89,7 +95,7 @@ def start_label ():
             flash('No more data')
             return redirect(url_for('show_mainMenu'))
 
-    return render_template('labeler.html', id=id, query=query, categories=categories, sortedList=sortedList)
+    return render_template('labeler.html', id=id, query=query, categories=categories, sortedList=sortedList, numquerys=numquerys, etiquetadas=etiquetadas)
 
 
 
@@ -101,19 +107,21 @@ def start_export ():
     categories = g.mydb.getFinalCategories ()
 
     allQuerys = g.mydb.getConsulta ( all=True )
-    strCategories = ",".join([str(query['catid']) + query['categoria'] for query in categories])
+    strCategories = "," +",".join([str(query['catid']) + '_' +query['categoria'] for query in categories])
+
+    csv = 'no, hay, suficientes, datos'
 
     numCats = g.mydb.getNumCats ()
     cad = ''
     for query in allQuerys:
-        cad = cad + '"' + str(query['idconsulta']) + '/' + query['consulta'] + '"'
+        cad = cad +  str(query['idconsulta']) + '_' + query['consulta'] + ','
         listzeros=[0] * numCats        
         #en caso de no tener categorias da un error, lo ignoramos 
         #y no ponemos 1 en ninguna:
         for cat in query['categorias']:            
             listzeros[int(cat[0])] = 1
 
-        cad = cad + '"' + ','.join(str(e) for e in listzeros) + '"'
+        cad = cad + ','.join(str(e) for e in listzeros)
         cad = cad + '\n'
 
         csv = strCategories + '\n' + cad
@@ -128,10 +136,16 @@ def start_export ():
     return response    
 
 
-@app.route( '/show')
+@app.route( '/show', methods=['GET', 'POST'])
 def start_show ():
     if not session.get('logged_in'):
         return render_template('login.html')
+
+    if request.method == 'POST':
+        dictOptions = dict(request.form)
+        g.mydb.delConsultas ( dictOptions['borrar'] )
+        flash(str(len(dictOptions['borrar'])) + ' entradas borradas...'  )
+
 
     entries  = g.mydb.getConsulta ( all=True )
     dictCats = g.mydb.getDictCats ()
@@ -151,7 +165,6 @@ def login():
     	    session['logged_in'] = True
     	    return redirect(url_for('show_mainMenu'))
     return render_template('login.html', error=error)
-
 
 
 

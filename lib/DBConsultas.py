@@ -1,6 +1,6 @@
 import csv
 from pymongo import MongoClient
-
+import pymongo
 
 class DB (object):
 
@@ -22,7 +22,7 @@ class DB (object):
 	__categoriesList = None
 	__dictCats = {}
 	
-
+	__querysTotales = None
 
 	def connect( self ):
 		'''
@@ -51,6 +51,7 @@ class DB (object):
 		self.__host = host
 
 		self.connect ()
+		self.createIndex ()
 
 	def cargarCategorias ( self, fich):
 
@@ -114,7 +115,7 @@ class DB (object):
 				try:
 					catList [cat['familia']].update({cat['catid']:cat['categoria']})
 				except:
-					catList[cat['familia']]={}
+					catList[cat['familia']]={cat['catid']:cat['categoria']}
 
 			self.__categoriesList = catList
 
@@ -131,25 +132,39 @@ class DB (object):
 			return self.__dictCats
 
 	def getFinalCategories ( self ):
-		return  (self.__collectionCategorias.find({},{'catid':1,'categoria':1}))
+		return  (self.__collectionCategorias.find({},{'catid':1,'categoria':1}).sort('catid',1))
 
 	def getConsulta ( self, all=False ):
 		if all:			
-			return  (self.__collectionConsultas.find({'categorias':{'$exists':True}}))
+			return  (self.__collectionConsultas.find({'categorias':{'$exists':True}}).sort('idconsulta',1))
 		else:
-			return  (self.__collectionConsultas.find({'categorias':{'$exists':False}}).limit(1)[0])
+			return  (self.__collectionConsultas.find({'categorias':{'$exists':False}}).sort('idconsulta',1).limit(1)[0])
 
 	def setCategoria (self, idconsulta, categorias ):
 		self.__collectionConsultas.update ({'idconsulta':int(idconsulta)},{'$set':{'categorias':categorias}})
 		#import ipdb ; ipdb.set_trace()
 
 
+	def getNumQuerys (self, etiquetadas = False):
+		if etiquetadas:
+			return  (self.__collectionConsultas.find({'categorias':{'$exists':True}}).count())
+		else:
+			if not self.__querysTotales:
+				self.__querysTotales = self.__collectionConsultas.count()
+			return self.__querysTotales
+
+
 	def getNumCats (self):
-		return  (self.__collectionConsultas.count())
+		return  (self.__collectionCategorias.count())
 
 	def createIndex (self):
-		self.__collectionCategorias.createIndex( { catid: 1 } )
+		self.__collectionCategorias.create_index([('field_i_want_to_index', pymongo.TEXT)])
+		#self.__collectionConsultas.IndexModel( { 'idconsulta': 1 } )
 
+	
+	def delConsultas (self, listaC ):
+		res = map(int, listaC)
+		self.__collectionConsultas.update ({'idconsulta':{'$in':res}},{'$unset':{'categorias':''}}, multi=True)
 
 
 
