@@ -88,11 +88,11 @@ def start_label ():
         query = g.mydb.getConsulta ( all=False )
         etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
         if not (query):
-            flash('No more data')
+            flash('No more data, all queries done')
             return redirect(url_for('show_mainMenu'))
     else:
         if not(query):
-            flash('No more data')
+            flash('No more data, all queries done')
             return redirect(url_for('show_mainMenu'))
 
     return render_template('labeler.html', id=id, query=query, categories=categories, sortedList=sortedList, numquerys=numquerys, etiquetadas=etiquetadas)
