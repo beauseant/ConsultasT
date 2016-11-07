@@ -135,10 +135,13 @@ class DB (object):
 		return  (self.__collectionCategorias.find({},{'catid':1,'categoria':1}).sort('catid',1))
 
 	def getConsulta ( self, all=False ):
-		if all:			
-			return  (self.__collectionConsultas.find({'categorias':{'$exists':True}}).sort('idconsulta',1))
-		else:
-			return  (self.__collectionConsultas.find({'categorias':{'$exists':False}}).sort('idconsulta',1).limit(1)[0])
+		try:
+			if all:			
+				return  (self.__collectionConsultas.find({'categorias':{'$exists':True}}).sort('idconsulta',1))
+			else:
+				return  (self.__collectionConsultas.find({'categorias':{'$exists':False}}).sort('idconsulta',1).limit(1)[0])
+		except:
+			return None
 
 	def setCategoria (self, idconsulta, categorias ):
 		self.__collectionConsultas.update ({'idconsulta':int(idconsulta)},{'$set':{'categorias':categorias}})
