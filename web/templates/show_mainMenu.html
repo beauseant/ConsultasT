@@ -4,26 +4,34 @@
 
 <div class="mainoptions">
 
-	<a href="/labeler" class="a-btn">
-		<span class="a-btn-text">Etiquetar consultas sin categorizar</span> 
-		<span class="a-btn-slide-text"><i class="fa fa-hand-o-right" aria-hidden="true"></i></span>
-		<span class="a-btn-icon-right"><span></span></span>
-	</a>
+	{% if numquerys %}
 
-	<a href="/show" class="a-btn">
-		<span class="a-btn-text">Ver consultas categorizadas</span> 
-		<span class="a-btn-slide-text"><i class="fa fa-tags" aria-hidden="true"></i></span>
-		<span class="a-btn-icon-right"><span></span></span>
-	</a>
+		<a href="/labeler" class="a-btn">
+			<span class="a-btn-text">Etiquetar consultas sin categorizar</span> 
+			<span class="a-btn-slide-text"><i class="fa fa-hand-o-right" aria-hidden="true"></i></span>
+			<span class="a-btn-icon-right"><span></span></span>
+		</a>
 
-	<a href="/export" class="a-btn">
-		<span class="a-btn-text">Exportar a un fichero</span> 
-		<span class="a-btn-slide-text"><i class="fa fa-tasks" aria-hidden="true"></i></span>
-		<span class="a-btn-icon-right"><span></span></span>
-	</a>
+		<a href="/show" class="a-btn">
+			<span class="a-btn-text">Ver consultas categorizadas</span> 
+			<span class="a-btn-slide-text"><i class="fa fa-tags" aria-hidden="true"></i></span>
+			<span class="a-btn-icon-right"><span></span></span>
+		</a>
 
+		<a href="/export" class="a-btn">
+			<span class="a-btn-text">Exportar a un fichero</span> 
+			<span class="a-btn-slide-text"><i class="fa fa-tasks" aria-hidden="true"></i></span>
+			<span class="a-btn-icon-right"><span></span></span>
+		</a>
+	{% else %}
+		<a href="/labeler" class="a-btn">
+			<span class="a-btn-text">Cargar datos desde fichero</span> 
+			<span class="a-btn-slide-text"><i class="fa fa-hand-o-right" aria-hidden="true"></i></span>
+			<span class="a-btn-icon-right"><span></span></span>
+		</a>
+	{% endif %}
 
-</div>
+	</div>
 
 <div id="footer">
 <p>Consultas totales:{{numquerys}} / Consultas categorizadas:{{etiquetadas}}</p>

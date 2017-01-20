@@ -39,7 +39,7 @@ class DB (object):
 
 		except Exception as E:
 			print ('fail to connect mongodb @ %s:%d, %s', self.__host, self.__port, str (E) )
-			exit ()
+			return -1
 
 		print ("connected to mongodb @ %s:[%s]", self.__host, self.__port)
 
@@ -50,8 +50,11 @@ class DB (object):
 		self.__user = user
 		self.__host = host
 
-		self.connect ()
-		self.createIndex ()
+		if self.connect () == -1:
+			raise NameError('DBConnectError')
+		else:
+			self.createIndex ()
+			
 
 	def cargarCategorias ( self, fich):
 

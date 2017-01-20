@@ -35,8 +35,12 @@ def before_request():
     config = ConfigParser.ConfigParser()
     config.read('consultas.cfg')
 
+    try:
+    	g.mydb = DB (dbName=config.get('DB','dbname'), host=config.get('DB','host'), user=config.get('DB','user'), pwd=config.get('DB','pwd'))
+    except:
+    	g.mydb = -1
 
-    g.mydb = DB (dbName=config.get('DB','dbname'), host=config.get('DB','host'), user=config.get('DB','user'), pwd=config.get('DB','pwd'))
+
 
 
 @app.teardown_request
@@ -50,13 +54,23 @@ def teardown_request(exception):
 
 @app.route('/')
 def show_mainMenu():
-    if not session.get('logged_in'):
-        return render_template('login.html')
 
-    numquerys = g.mydb.getNumQuerys ( etiquetadas = False)
-    etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
+	if g.mydb == -1:
+		print 'Connection to database failed. Check config file'
+		flash('Connection to database failed: 1) Check config file, 2) Create valid user: python main.py --addUser --name admin --pwd pwd')
+		return render_template ('empty.html')
 
-    return render_template('show_mainMenu.html', etiquetadas=etiquetadas, numquerys=numquerys)
+
+	if not session.get('logged_in'):
+	    return render_template('login.html')
+
+	numquerys = g.mydb.getNumQuerys ( etiquetadas = False)
+	etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
+
+	if numquerys == 0:
+		flash('La base de datos no contiene ninguna informacion... quizas sea la primera vez que se usa.')
+
+	return render_template('show_mainMenu.html', etiquetadas=etiquetadas, numquerys=numquerys)
 
 
 @app.route('/about')
@@ -154,17 +168,18 @@ def start_show ():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
-    if request.method == 'POST':
 
-        hashPwd = g.mydb.getUserPwd ( request.form['username'] )        
+	error = None
+	if request.method == 'POST':
 
-    	if (not hashPwd) or (not ( bcrypt.check_password_hash( hashPwd, request.form['password']) )):
-    		error = 'Invalid password or Username'
-    	else:
-    	    session['logged_in'] = True
-    	    return redirect(url_for('show_mainMenu'))
-    return render_template('login.html', error=error)
+		hashPwd = g.mydb.getUserPwd ( request.form['username'] )        
+
+		if (not hashPwd) or (not ( bcrypt.check_password_hash( hashPwd, request.form['password']) )):
+			error = 'Invalid password or Username'
+		else:
+		    session['logged_in'] = True
+		    return redirect(url_for('show_mainMenu'))
+	return render_template('login.html', error=error)
 
 
 
