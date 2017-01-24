@@ -44,7 +44,7 @@ jQuery(document).ready(function($){
 				            <td> {{ entry['consulta'] }} </td>
 				            <td>
 				            	{% for cat in entry['categorias'] %}
-				            		{% set catStr=dictCats[cat[0]] %}
+				            		{% set catStr=dictCats[cat] %}
 				            		{{catStr}},
 				            	{% endfor %}			        
 				            </td>

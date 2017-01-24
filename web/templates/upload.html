@@ -1,0 +1,23 @@
+
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="mainoptions">
+
+    <!doctype html>
+    <title>Upload new File</title>
+    <form method=post enctype=multipart/form-data>
+    
+	    <h3>Fichero categorías</h3>
+			<p><input type=file name=fileCat>
+
+		<h3>Fichero consultas</h3>
+			<p><input type=file name=fileCon>
+
+
+		<input type=submit value=Upload>
+
+    </form>
+
+
+{% endblock %}

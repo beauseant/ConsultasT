@@ -4,6 +4,8 @@ import sqlite3
 from flask import Flask, request, session, make_response, g, redirect, url_for, \
      abort, render_template, flash
 
+from werkzeug.utils import secure_filename
+
 from contextlib import closing
 
 import sys
@@ -15,6 +17,7 @@ from flask.ext.bcrypt import Bcrypt
 
 import ConfigParser
 import argparse
+import os
 
 
 
@@ -26,6 +29,14 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config.from_object(__name__)
 
+ALLOWED_EXTENSIONS = set(['txt', 'csv', 'png', 'jpg', 'jpeg', 'gif'])
+
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 
 
@@ -34,6 +45,10 @@ def before_request():
 
     config = ConfigParser.ConfigParser()
     config.read('consultas.cfg')
+
+    app.config['MAX_CONTENT_LENGTH'] = int(config.get('APP','maxsize')) * 1024 * 1024
+    app.config['UPLOAD_FOLDER'] = config.get('APP','tmpdir')
+
 
     try:
     	g.mydb = DB (dbName=config.get('DB','dbname'), host=config.get('DB','host'), user=config.get('DB','user'), pwd=config.get('DB','pwd'))
@@ -96,7 +111,7 @@ def start_label ():
 
         queryid =  dictOptions.pop ('query_id')[0]
 
-        cats = [v for k,v in dictOptions.iteritems() ]
+        cats = [int(v[0]) for k,v in dictOptions.iteritems() ]
 
         g.mydb.setCategoria ( queryid, cats)
         query = g.mydb.getConsulta ( all=False )
@@ -188,6 +203,69 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_mainMenu'))
+
+
+
+
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if not session.get('logged_in'):
+        return render_template('login.html')
+
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'fileCon' not in request.files:
+            flash('No existe el fichero de consultas...')
+            return redirect(request.url)
+
+        if 'fileCat' not in request.files:
+            flash('No existe el fichero de categorias...')
+            return redirect(request.url)
+
+
+        fileCat = request.files['fileCat']
+        fileCon = request.files['fileCon']
+
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if (fileCat.filename == '' or fileCon.filename == ''):
+            flash('Debe seleccionar ambos ficheros..')
+            return redirect(request.url)
+
+        if file and (allowed_file(fileCat.filename)  and allowed_file(fileCon.filename)):
+            filenameCat = secure_filename(fileCat.filename)
+            filenameCon = secure_filename(fileCon.filename)
+
+            fileCat.save(os.path.join(app.config['UPLOAD_FOLDER'], filenameCat))
+            fileCon.save(os.path.join(app.config['UPLOAD_FOLDER'], filenameCon ))
+            return redirect(url_for('uploaded_file',
+                                    filenameCat=filenameCat, filenameCon=filenameCon))
+    return render_template ('upload.html')
+
+
+
+
+@app.route('/uploads/<filenameCat>,<filenameCon>')
+def uploaded_file( filenameCat, filenameCon ):
+    #from flask import send_from_directory
+    #return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+    #aqui tenemos el fichero:
+
+    g.mydb.cargarCategorias ( str(app.config['UPLOAD_FOLDER'] + '/' + filenameCat ) )
+    g.mydb.cargarConsultas ( str(app.config['UPLOAD_FOLDER'] + '/' + filenameCon ) )
+
+    numquerys = g.mydb.getNumQuerys ( etiquetadas = False)
+    etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )
+
+
+
+
+    if numquerys == 0:
+        flash('La base de datos no contiene ninguna informacion... quizas sea la primera vez que se usa.')
+
+    return render_template('show_mainMenu.html', etiquetadas=etiquetadas, numquerys=numquerys)
 
 
 
