@@ -148,7 +148,8 @@ def start_export ():
         #en caso de no tener categorias da un error, lo ignoramos 
         #y no ponemos 1 en ninguna:
         for cat in query['categorias']:            
-            listzeros[int(cat[0])] = 1
+            #listzeros[int(cat[0])] = 1
+            listzeros[int(cat)] = 1
 
         cad = cad + ','.join(str(e) for e in listzeros)
         cad = cad + '\n'
@@ -172,9 +173,11 @@ def start_show ():
 
     if request.method == 'POST':
         dictOptions = dict(request.form)
-        g.mydb.delConsultas ( dictOptions['borrar'] )
-        flash(str(len(dictOptions['borrar'])) + ' entradas borradas...'  )
-
+        if 'borrar' in dictOptions:
+            g.mydb.delConsultas ( dictOptions['borrar'] )
+            flash(str(len(dictOptions['borrar'])) + ' entradas borradas...'  )
+        else:
+            flash('Nada que borrar')
 
     entries  = g.mydb.getConsulta ( all=True )
     dictCats = g.mydb.getDictCats ()

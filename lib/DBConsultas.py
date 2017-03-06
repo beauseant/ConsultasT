@@ -130,7 +130,7 @@ class DB (object):
 		if not self.__dictCats:
 			self.__dictCats = {}
 			for data in self.__collectionCategorias.find({},{'catid':1,'categoria':1}):
-				self.__dictCats[str(data['catid'])] = data['categoria']
+				self.__dictCats[int(data['catid'])] = data['categoria']
 
 			return self.__dictCats
 
