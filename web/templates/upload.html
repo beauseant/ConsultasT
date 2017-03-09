@@ -5,30 +5,63 @@
 
 
 <div class="container-fluid bg-3 text-center">    
-  <div class="row">
+    <div class="row">
+        	<div class="col-sm-12" style="margin-top:30px; background-color:  #ffb3b3;">
+        		<h3>Si carga nuevos datos los antiguos serán borrados...</h3>
+        	</div>
 
-	<div class="col-sm-12" style="margin-top:30px; background-color:  #ffb3b3;">
-		<h3>Si carga nuevos datos los antiguos serán borrados...</h3>
-	</div>
+          <div class="col-sm-6" style="background-color:  #f2f2f2; padding-bottom: 50px;">
+            <h3>Fichero categorías:</h3>
+            <form  method=post enctype=multipart/form-data>
+            <label class="btn btn-default btn-file">
+            		<input type=file name=fileCat>
+            </label>
+          </div>
 
-    <div class="col-sm-6" style="background-color:  #f2f2f2; padding-bottom: 50px;">
-      <h3>Fichero categorías:</h3>
-      <form method=post enctype=multipart/form-data>
-      <label class="btn btn-default btn-file">
-      		<input type=file name=fileCat>
-      </label>
+          <div class="col-sm-6" style="background-color:  #f2f2f2 ; padding-bottom: 50px;">
+            <h3>Fichero de consultas:</h3>
+            <label class="btn btn-default btn-file">
+            		<input type=file name=fileCon>
+            </label>
+          </div>
     </div>
-    <div class="col-sm-6" style="background-color:  #f2f2f2 ; padding-bottom: 50px;">
-      <h3>Fichero de consultas:</h3>
-      <label class="btn btn-default btn-file">
-      		<input type=file name=fileCon>
-      </label>
+
+    <div class="row" style="background-color:  #f2f2f2;">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-3">
+            <div class="form-group" style="width:250px;">
+                  <label for="codec">Tipo de codificación:</label>
+                  <select class="form-control" name="codec" id="codec">
+                      <option>iso-8859-1</option>
+                      <option>utf8</option>
+                  </select>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+
+            <div class="form-group" style="width:250px;">
+                  <label for="sep">Separador de columnas:</label>
+                  <select class="form-control" name="sep" id="sep">
+                      <option>;</option>
+                      <option>,</option>
+                  </select>
+            </div>
+
+
+
+        </div>
+        <div class="col-sm-3"></div>
+
     </div>
-  </div>
-  <div class="col-sm-12" style="margin-top:30px;">
-  		<input class="btn btn-primary" type=submit value=Upload>
-  	 </form>
-  </div>
+
+
+
+    <div class="container-fluid bg-3 text-center">    
+      <div class="col-sm-12" style="margin-top:90px;">
+      		<input class="btn btn-primary" type=submit value=Upload>
+      	 </form>
+    </div>
 </div>  
 
 

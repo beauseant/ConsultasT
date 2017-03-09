@@ -136,20 +136,20 @@ def start_export ():
     categories = g.mydb.getFinalCategories ()
 
     allQuerys = g.mydb.getConsulta ( all=True )
-    strCategories = "," +",".join([str(query['catid']) + '_' +query['categoria'] for query in categories])
+    strCategories = "," +",".join([str(query['catid']) + '_' +query['categoria'].encode('iso8859-1')  for query in categories])
 
     csv = 'no, hay, suficientes, datos'
 
     numCats = g.mydb.getNumCats ()
     cad = ''
     for query in allQuerys:
-        cad = cad +  str(query['idconsulta']) + '_' + query['consulta'] + ','
+        cad = cad +  str(query['idconsulta']) + '_' + query['consulta'].encode('iso8859-1') + ','
         listzeros=[0] * numCats        
         #en caso de no tener categorias da un error, lo ignoramos 
         #y no ponemos 1 en ninguna:
         for cat in query['categorias']:            
             #listzeros[int(cat[0])] = 1
-            listzeros[int(cat)] = 1
+            listzeros[int(cat)+1] = 1
 
         cad = cad + ','.join(str(e) for e in listzeros)
         cad = cad + '\n'
@@ -231,6 +231,7 @@ def upload_file():
         fileCat = request.files['fileCat']
         fileCon = request.files['fileCon']
 
+        
         # if user does not select file, browser also
         # submit a empty part without filename
         if (fileCat.filename == '' or fileCon.filename == ''):
@@ -243,21 +244,24 @@ def upload_file():
 
             fileCat.save(os.path.join(app.config['UPLOAD_FOLDER'], filenameCat))
             fileCon.save(os.path.join(app.config['UPLOAD_FOLDER'], filenameCon ))
+
+            
+
             return redirect(url_for('uploaded_file',
-                                    filenameCat=filenameCat, filenameCon=filenameCon))
+                                    filenameCat=filenameCat, filenameCon=filenameCon, codec=request.form['codec'], sep=request.form['sep']))
     return render_template ('upload.html')
 
 
 
 
-@app.route('/uploads/<filenameCat>,<filenameCon>')
-def uploaded_file( filenameCat, filenameCon ):
+@app.route('/uploads/<filenameCat>,<filenameCon>,<codec>,<sep>')
+def uploaded_file( filenameCat, filenameCon, codec, sep ):
     #from flask import send_from_directory
     #return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
     #aqui tenemos el fichero:
 
-    g.mydb.cargarCategorias ( str(app.config['UPLOAD_FOLDER'] + '/' + filenameCat ) )
-    g.mydb.cargarConsultas ( str(app.config['UPLOAD_FOLDER'] + '/' + filenameCon ) )
+    g.mydb.cargarCategorias ( str(app.config['UPLOAD_FOLDER'] + '/' + filenameCat ), codec, sep )
+    g.mydb.cargarConsultas ( str(app.config['UPLOAD_FOLDER'] + '/' + filenameCon ), codec )
 
     numquerys = g.mydb.getNumQuerys ( etiquetadas = False)
     etiquetadas = g.mydb.getNumQuerys ( etiquetadas = True )

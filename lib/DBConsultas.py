@@ -56,27 +56,31 @@ class DB (object):
 			self.createIndex ()
 			
 
-	def cargarCategorias ( self, fich):
+	def cargarCategorias ( self, fich, codec='utf8',delimiter=';'):
 
 		print 'loading %s' % (fich)
 		self.__collectionCategorias.remove({})
 
+		codec = str (codec)
+		delimiter = str(delimiter)
+
 		with open(fich, 'rb') as f:
-		    reader = csv.reader(f)
+		    reader = csv.reader(f, delimiter=(delimiter))
 		    columns = list(zip(*reader))
 
 		    catTotales = []
 		    contador = 0
 		    for col in columns:
-		    	princ = col[0]
+		    	princ = col[0].decode(codec).encode('utf8') 
 		    	for data in col[1:]:
-		    		if not (data==''):		    			
-		    			catTotales.append ({'categoria':data,'familia':princ,'catid':contador})
-		    			contador += 1
+		    		if not (data==''):
+						data = data.decode(codec).encode('utf8') 
+						catTotales.append ({'categoria':data,'familia':princ,'catid':contador})
+						contador += 1
 
 		self.__collectionCategorias.insert ( catTotales )
 
-	def cargarConsultas (self, fich):
+	def cargarConsultas (self, fich, codec):
 		print 'loading %s' % (fich)
 		self.__collectionConsultas.remove({})
 
@@ -88,6 +92,7 @@ class DB (object):
 
 		    for i, data in enumerate(col):
 		    	if not (data == ''):
+		    		data = data.decode(codec).encode('utf8') 
 		    		consultasTotales.append ({'idconsulta':i,'consulta':data})
 
 		self.__collectionConsultas.insert ( consultasTotales )
