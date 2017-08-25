@@ -136,20 +136,24 @@ def start_export ():
     categories = g.mydb.getFinalCategories ()
 
     allQuerys = g.mydb.getConsulta ( all=True )
-    strCategories = "," +",".join([str(query['catid']) + '_' +query['categoria'].encode('iso8859-1')  for query in categories])
+
+    #Debemos quitar las comas de la lista de categorias porque cuando se salva como csv se usan las comas como separadores:
+    strCategories = "," +",".join([str(query['catid']) + '_' +query['categoria'].encode('iso8859-1').replace(',','')  for query in categories])
 
     csv = 'no, hay, suficientes, datos'
 
     numCats = g.mydb.getNumCats ()
     cad = ''
     for query in allQuerys:
-        cad = cad +  str(query['idconsulta']) + '_' + query['consulta'].encode('iso8859-1') + ','
+        #Debemos quitar las comas de la lista de categorias porque cuando se salva como csv se usan las comas como separadores:
+        cad = cad +  str(query['idconsulta']) + '_' + query['consulta'].encode('iso8859-1').replace(',','') + ','
         listzeros=[0] * numCats        
         #en caso de no tener categorias da un error, lo ignoramos 
         #y no ponemos 1 en ninguna:
+        #import ipdb ; ipdb.set_trace()
         for cat in query['categorias']:            
             #listzeros[int(cat[0])] = 1
-            listzeros[int(cat)+1] = 1
+            listzeros[int(cat)] = 1
 
         cad = cad + ','.join(str(e) for e in listzeros)
         cad = cad + '\n'
